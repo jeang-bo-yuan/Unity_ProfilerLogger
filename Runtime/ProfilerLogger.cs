@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Unity.Profiling;
 using UnityEngine;
 
@@ -9,12 +8,14 @@ namespace JeangBoYuan.ProfilerLogger
 {
     public class ProfilerLogger : MonoBehaviour
     {
+#if UNITY_EDITOR
         [SerializeField, Tooltip("The output path to use when \"Play in Editor\"")]
         private PathStruct outputPathEditor = new PathStruct
         {
             prefix = PathPrefix.AssetsPath,
             path = "Profiler/ProfilerLogger.csv"
         };
+#endif
         [SerializeField, Tooltip("The output path to use in built game")]
         private PathStruct outputPathGameBuild = new PathStruct
         {
@@ -40,21 +41,6 @@ namespace JeangBoYuan.ProfilerLogger
         /// </summary>
         private void Start()
         {
-            // Initialize the recorders
-            var header = new StringBuilder("Time");
-            foreach (var tgt in targetMetrics)
-            {
-                try
-                {
-                    _recorders.Add(tgt.StartNewRecorder());
-                    header.Append($", \"{tgt.statName}\"");
-                }
-                catch (ArgumentException e)
-                {
-                    Debug.LogException(e);
-                }
-            }
-
             // Initialize output stream
 #if UNITY_EDITOR
             var path = outputPathEditor.ResolvePath();
@@ -64,9 +50,34 @@ namespace JeangBoYuan.ProfilerLogger
             Debug.Log($"[ProfilerLogger] Saved to {Path.GetFullPath(path)}");
             var dirName = Path.GetDirectoryName(path);
             if (dirName != null && !Directory.Exists(dirName)) Directory.CreateDirectory(dirName);
+
+            try
+            {
+                _writer = new StreamWriter(path, false);
+            }
+            catch (IOException)
+            {
+                var newPath = path + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
+                Debug.LogError($"[ProfilerLogger] {path} has been opened by another process, save to {newPath} instead");
+                _writer = new StreamWriter(newPath, false);
+            }
+            _writer.Write("Time");
             
-            _writer = new StreamWriter(outputPathEditor.ResolvePath(), false);
-            _writer.WriteLine(header.ToString());
+            // Initialize the recorders
+            foreach (var tgt in targetMetrics)
+            {
+                try
+                {
+                    _recorders.Add(tgt.StartNewRecorder());
+                    _writer.Write($", \"{tgt.statName}\"");
+                }
+                catch (ArgumentException e)
+                {
+                    Debug.LogException(e);
+                }
+            }
+            
+            _writer.Write("\n");
         }
         
         private void Update()
