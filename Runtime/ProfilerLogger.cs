@@ -15,8 +15,6 @@ namespace JeangBoYuan.ProfilerLogger
             prefix = PathPrefix.AssetsPath,
             path = "Profiler/ProfilerLogger.csv"
         };
-        [SerializeField, Tooltip("Whether the output path in built game is as same as in \"Play in Editor\"")]
-        private bool sameAsEditor = true;
         [SerializeField, Tooltip("The output path to use in built game")]
         private PathStruct outputPathGameBuild = new PathStruct
         {
@@ -42,11 +40,6 @@ namespace JeangBoYuan.ProfilerLogger
         /// </summary>
         private void Start()
         {
-            if (sameAsEditor)
-            {
-                outputPathGameBuild = outputPathEditor;
-            }
-
             // Initialize the recorders
             var header = new StringBuilder("Time");
             foreach (var tgt in targetMetrics)
@@ -68,7 +61,7 @@ namespace JeangBoYuan.ProfilerLogger
 #else
             var path = outputPathGameBuild.ResolvePath();
 #endif
-            Debug.Log($"[ProfilerLogger] Saved to {path}");
+            Debug.Log($"[ProfilerLogger] Saved to {Path.GetFullPath(path)}");
             var dirName = Path.GetDirectoryName(path);
             if (dirName != null && !Directory.Exists(dirName)) Directory.CreateDirectory(dirName);
             
@@ -83,12 +76,12 @@ namespace JeangBoYuan.ProfilerLogger
             _accumDeltaTimeSeconds = 0f;
             
             // sample and write
-            var sample = new StringBuilder($"{Time.realtimeSinceStartup}");
+            _writer.Write($"{Time.realtimeSinceStartup}");
             foreach (var recorder in _recorders)
             {
-                sample.Append($", {recorder.GetSample(0).Value}");
+                _writer.Write($", {recorder.GetSample(0).Value}");
             }
-            _writer.WriteLine(sample.ToString());
+            _writer.Write("\n");
         }
 
         private void OnDestroy()
