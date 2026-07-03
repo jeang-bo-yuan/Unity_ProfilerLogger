@@ -32,7 +32,9 @@ namespace JeangBoYuan.ProfilerLogger
             new TargetMetrics(){category = Category.Render, statName = "GPU Frame Time"},
         };
 
-        private float _accumDeltaTimeSeconds = 0f;
+        private float _previousFrameEndSeconds = 0f;
+        private float _accumFrameTimeSeconds = 0f;
+        private float _accumFrameCount = 0f;
         private readonly List<ProfilerRecorder> _recorders = new List<ProfilerRecorder>();
         private StreamWriter _writer;
         
@@ -61,9 +63,9 @@ namespace JeangBoYuan.ProfilerLogger
                 Debug.LogError($"[ProfilerLogger] {path} has been opened by another process, save to {newPath} instead");
                 _writer = new StreamWriter(newPath, false);
             }
-            _writer.Write("Time");
             
             // Initialize the recorders
+            _writer.Write("Time, FPS");
             foreach (var tgt in targetMetrics)
             {
                 try
@@ -82,17 +84,35 @@ namespace JeangBoYuan.ProfilerLogger
         
         private void Update()
         {
-            _accumDeltaTimeSeconds += Time.deltaTime;
-            if (_accumDeltaTimeSeconds < sampleIntervalSeconds) return;
-            _accumDeltaTimeSeconds = 0f;
+            _accumFrameTimeSeconds += (Time.realtimeSinceStartup - _previousFrameEndSeconds);
+            _accumFrameCount += 1;
+            
+            if (_accumFrameTimeSeconds >= sampleIntervalSeconds)
+                WriteOneSample();
+            
+            _previousFrameEndSeconds = Time.realtimeSinceStartup;
+        }
+
+        private void WriteOneSample()
+        {
+            var fps = _accumFrameCount / _accumFrameTimeSeconds;
             
             // sample and write
-            _writer.Write($"{Time.realtimeSinceStartup}");
+            _writer.Write($"{Time.realtimeSinceStartup}, {fps}");
             foreach (var recorder in _recorders)
             {
-                _writer.Write($", {recorder.GetSample(0).Value}");
+                try
+                {
+                    _writer.Write($", {recorder.GetSample(0).Value}");
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    _writer.Write(", NaN");
+                }
             }
             _writer.Write("\n");
+            
+            _accumFrameCount = _accumFrameTimeSeconds = 0f;
         }
 
         private void OnDestroy()
