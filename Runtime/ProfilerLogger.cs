@@ -5,7 +5,7 @@ using System.Text;
 using Unity.Profiling;
 using UnityEngine;
 
-namespace JiangBoYuan.ProfilerLogger
+namespace JeangBoYuan.ProfilerLogger
 {
     public class ProfilerLogger : MonoBehaviour
     {

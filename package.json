@@ -1,12 +1,12 @@
 ﻿{
-  "name": "com.jiang-bo-yuan.profiler_logger",
+  "name": "com.jeang-bo-yuan.profiler_logger",
   "version": "0.1.0",
   "displayName": "Profiler Logger",
   "description": "This package export in-game profiler information to the text file.",
   "unity": "2020.2",
   
   "author": {
-    "name": "Jiang, Bo-Yuan",
+    "name": "Jeang, Bo-Yuan",
     "url": "https://jeang-bo-yuan.github.io/"
   }
 }

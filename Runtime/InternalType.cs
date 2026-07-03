@@ -3,7 +3,7 @@ using System.IO;
 using Unity.Profiling;
 using UnityEngine;
 
-namespace JiangBoYuan.ProfilerLogger
+namespace JeangBoYuan.ProfilerLogger
 {
     /// <summary>
     /// All the ProfilerCategory
