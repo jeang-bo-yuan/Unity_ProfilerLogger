@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Unity.Profiling;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 namespace JeangBoYuan.ProfilerLogger
 {
@@ -78,19 +80,25 @@ namespace JeangBoYuan.ProfilerLogger
                     Debug.LogException(e);
                 }
             }
-            
             _writer.Write("\n");
+
+            StartCoroutine(UpdateCoroutine());
         }
         
-        private void Update()
+        private IEnumerator UpdateCoroutine()
         {
-            _accumFrameTimeSeconds += (Time.realtimeSinceStartup - _previousFrameEndSeconds);
-            _accumFrameCount += 1;
-            
-            if (_accumFrameTimeSeconds >= sampleIntervalSeconds)
-                WriteOneSample();
-            
-            _previousFrameEndSeconds = Time.realtimeSinceStartup;
+            while (true)
+            {
+                yield return new WaitForEndOfFrame();
+                
+                _accumFrameTimeSeconds += (Time.realtimeSinceStartup - _previousFrameEndSeconds);
+                _accumFrameCount += 1;
+                
+                if (_accumFrameTimeSeconds >= sampleIntervalSeconds)
+                    WriteOneSample();
+                
+                _previousFrameEndSeconds = Time.realtimeSinceStartup;
+            }
         }
 
         private void WriteOneSample()
