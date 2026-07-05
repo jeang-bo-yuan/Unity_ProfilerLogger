@@ -32,6 +32,16 @@ namespace JeangBoYuan.ProfilerLogger
         {
             new TargetMetrics(){category = Category.Render, statName = "CPU Total Frame Time"},
             new TargetMetrics(){category = Category.Render, statName = "GPU Frame Time"},
+            
+            new TargetMetrics(){category = Category.Scripts, statName = "PlayerLoop"},
+            new TargetMetrics(){category = Category.Scripts, statName = "RenderLoop"},
+            
+            // Important metrics for rendering: Waiting Command + Process Command + Present + VSync
+            new TargetMetrics(){category = Category.Render, statName = "Gfx.WaitForGfxCommandsFromMainThread"},
+            new TargetMetrics(){category = Category.Render, statName = "Gfx.ProcessCommands"},
+            new TargetMetrics(){category = Category.Render, statName = "Gfx.PresentFrame"}, // wait GPU to render and present, include VSync
+            new TargetMetrics(){category = Category.Render, statName = "Gfx.WaitForPresentOnGfxThread"}, // main thread is ready for next frame, but GPU has bottleneck
+            new TargetMetrics(){category =  Category.Render, statName = "WaitForTargetFPS"}, // waiting for VSync
         };
 
         private float _previousFrameEndSeconds = 0f;
@@ -53,7 +63,7 @@ namespace JeangBoYuan.ProfilerLogger
 #endif
             Debug.Log($"[ProfilerLogger] Saved to {Path.GetFullPath(path)}");
             var dirName = Path.GetDirectoryName(path);
-            if (dirName != null && !Directory.Exists(dirName)) Directory.CreateDirectory(dirName);
+            if (dirName != null && dirName != "" && !Directory.Exists(dirName)) Directory.CreateDirectory(dirName);
 
             try
             {
