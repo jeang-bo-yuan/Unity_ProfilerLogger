@@ -41,9 +41,9 @@ namespace JeangBoYuan.ProfilerLogger
         public string statName;
 
         /// <summary>
-        /// Start a new recorder that record the target metrics
+        /// Start a new recorder that record the target metrics. It might be invalid!
         /// </summary>
-        /// <exception cref="ArgumentException">The target metrics is invalid</exception>
+        /// <exception cref="ArgumentException">The category is invalid</exception>
         public ProfilerRecorder StartNewRecorder()
         {
             var maybeCategory = typeof(ProfilerCategory).GetProperty(category.ToString())?.GetValue(null);
@@ -52,10 +52,7 @@ namespace JeangBoYuan.ProfilerLogger
                 throw new ArgumentException($"ProfilerCategory.{category} is invalid");
             
             var recorder = ProfilerRecorder.StartNew(c, statName);
-            if (recorder.Valid) return recorder;
-                
-            throw new ArgumentException(
-                $"\"{statName}\" (in category {category}) is neither a valid Profiler Counter nor a valid Profiler Marker");
+            return recorder;
         }
     }
 
