@@ -28,8 +28,6 @@ namespace JeangBoYuan.ProfilerLogger
         
         [SerializeField, Tooltip("The minimum interval (in seconds) between each sample")]
         private float sampleIntervalSeconds = 1f;
-        [SerializeField, Tooltip("The times trying to restart the profiler recorder if it's invalid at the first time start up")]
-        private uint restartRecorderTimes = 0;
         [SerializeField]
         private bool showFPSOnGUI = false;
         [SerializeField, Tooltip("The position to show FPS. The left-botton is (0, 0).")]
@@ -137,17 +135,9 @@ namespace JeangBoYuan.ProfilerLogger
             _fps = _accumFrameCount / _accumFrameTimeSeconds;
             
             // sample and write
-            _writer.Write($"{Time.realtimeSinceStartup}, {_fps}");
+            _writer.Write($"{Time.realtimeSinceStartup},{_fps}");
             for (var i = 0; i < _recorders.Count; i++)
             {
-                // Try to restart
-                if (restartRecorderTimes > 0 && !_recorders[i].Valid)
-                {
-                    _recorders[i].Dispose();
-                    _recorders[i] = targetMetrics[i].StartNewRecorder();
-                    Debug.LogWarning($"[ProfilerLogger] Try to restart \"{targetMetrics[i].statName}\" (in category {targetMetrics[i].category})");
-                }
-                
                 // Output the sampled data, output NaN if unavailable
                 try
                 {
@@ -158,7 +148,6 @@ namespace JeangBoYuan.ProfilerLogger
                     _writer.Write(",NaN");
                 }
             }
-            restartRecorderTimes = restartRecorderTimes == 0 ? 0 : restartRecorderTimes - 1;
             _writer.Write("\n");
             
             _accumFrameCount = _accumFrameTimeSeconds = 0f;
