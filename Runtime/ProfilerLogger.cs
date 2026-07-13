@@ -33,7 +33,7 @@ namespace JeangBoYuan.ProfilerLogger
         [SerializeField, Tooltip("The position to show FPS. The left-botton is (0, 0).")]
         private Vector2 showFPSPosition = new(100f, 100f); 
         
-        [SerializeField, Tooltip("Specify which profiler counter's value need to be logged")]
+        [SerializeField, Tooltip("Specify which metric (Profiler Counter or Profiler Marker) need to be logged")]
         private List<TargetMetrics> targetMetrics = new List<TargetMetrics>
         {
             new TargetMetrics(){category = Category.Render, statName = "CPU Total Frame Time"},
@@ -103,18 +103,7 @@ namespace JeangBoYuan.ProfilerLogger
             yield return new WaitForEndOfFrame();
             
             // Initialize the recorders at the end of frame
-            _writer.Write("Time,FPS");
-            foreach (var tgt in targetMetrics)
-            {
-                _recorders.Add(tgt.StartNewRecorder());
-                _writer.Write($",\"{tgt.statName}\"");
-
-                if (!_recorders[^1].Valid)
-                {
-                    Debug.LogWarning($"\"[ProfilerLogger] {tgt.statName}\" (in category {tgt.category}) might be an invalid Profiler Counter or an invalid Profiler Marker");
-                }
-            }
-            _writer.Write("\n");
+            InitializeRecordersAndWriteHeader();
             
             // Loop for sample and record
             while (true)
@@ -130,6 +119,26 @@ namespace JeangBoYuan.ProfilerLogger
             }
         }
 
+        /// <summary>
+        /// Initialize recorders and write header
+        /// </summary>
+        private void InitializeRecordersAndWriteHeader()
+        {
+            _writer.Write("Time,FPS");
+            foreach (var tgt in targetMetrics)
+            {
+                if (tgt.disabled) continue;
+                _recorders.Add(tgt.StartNewRecorder());
+                _writer.Write($",\"{tgt.statName}\"");
+
+                if (!_recorders[^1].Valid)
+                {
+                    Debug.LogWarning($"\"[ProfilerLogger] {tgt.statName}\" (in category {tgt.category}) might be an invalid Profiler Counter or an invalid Profiler Marker");
+                }
+            }
+            _writer.Write("\n");
+        }
+
         private void WriteOneSample()
         {
             _fps = _accumFrameCount / _accumFrameTimeSeconds;
@@ -139,11 +148,11 @@ namespace JeangBoYuan.ProfilerLogger
             for (var i = 0; i < _recorders.Count; i++)
             {
                 // Output the sampled data, output NaN if unavailable
-                try
+                if (_recorders[i].Valid && _recorders[i].Count > 0)
                 {
-                    _writer.Write(_recorders[i].Valid ? $",{_recorders[i].GetSample(0).Value}" : ",NaN");
+                    _writer.Write($",{_recorders[i].GetSample(0).Value}");
                 }
-                catch (IndexOutOfRangeException)
+                else
                 {
                     _writer.Write(",NaN");
                 }

@@ -37,6 +37,7 @@ namespace JeangBoYuan.ProfilerLogger
     [Serializable]
     internal struct TargetMetrics
     {
+        public bool disabled;
         public Category category;
         public string statName;
 
