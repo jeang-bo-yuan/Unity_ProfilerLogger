@@ -28,6 +28,8 @@ namespace JeangBoYuan.ProfilerLogger
         
         [SerializeField, Tooltip("The minimum interval (in seconds) between each sample")]
         private float sampleIntervalSeconds = 1f;
+        [SerializeField, Tooltip("How many sampled data will be stored"), Min(1)]
+        private int sampleCapacity = 10;
         [SerializeField]
         private bool showFPSOnGUI = false;
         [SerializeField, Tooltip("The position to show FPS. The left-botton is (0, 0).")]
@@ -128,7 +130,7 @@ namespace JeangBoYuan.ProfilerLogger
             foreach (var tgt in targetMetrics)
             {
                 if (tgt.disabled) continue;
-                _recorders.Add(tgt.StartNewRecorder());
+                _recorders.Add(tgt.StartNewRecorder(sampleCapacity));
                 _writer.Write($",\"{tgt.statName}\"");
 
                 if (!_recorders[^1].Valid)
@@ -137,6 +139,21 @@ namespace JeangBoYuan.ProfilerLogger
                 }
             }
             _writer.Write("\n");
+        }
+        
+        static double GetRecorderFrameAverage(ProfilerRecorder recorder)
+        {
+            var samplesCount = recorder.Count;
+            if (samplesCount == 0)
+                return 0;
+
+            double r = 0;
+            for (var i = 0; i < samplesCount; ++i)
+            {
+                r += recorder.GetSample(i).Value;
+            }
+
+            return r / samplesCount;
         }
 
         private void WriteOneSample()
@@ -150,7 +167,7 @@ namespace JeangBoYuan.ProfilerLogger
                 // Output the sampled data, output NaN if unavailable
                 if (_recorders[i].Valid && _recorders[i].Count > 0)
                 {
-                    _writer.Write($",{_recorders[i].GetSample(0).Value}");
+                    _writer.Write($",{GetRecorderFrameAverage(_recorders[i])}");
                 }
                 else
                 {
