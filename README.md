@@ -25,7 +25,7 @@ A Unity package for logging Profiler Counters, Profiler Markers, and FPS to a CS
 
 1. Add the component `Profiler Logger` to any active object in the scene.
 2. Adjust the settings
-3. Play the game. It will starts to logging data when the `Start()` is executed, and save the log when the game quits.
+3. Play the game. It will start to log data when the `Start()` is executed, and save the log when the game quits.
 
 # Settings
 
