@@ -1,0 +1,32 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.jeang-bo-yuan.profiler_logger/Editor/ProfilerLoggerEditor_USS.uss?fileID=7433441132597879392&amp;guid=d02a44c850effb6459938cd973649863&amp;type=3#ProfilerLoggerEditor_USS" />
+    <ui:Foldout text="Output Path" name="outputPathBox" view-data-key="outputPathBox" class="box">
+        <ui:VisualElement class="pathField" style="flex-grow: 1; flex-direction: row;">
+            <ui:Label text="Play in Editor: " tooltip="Output path when playing in editor" />
+            <ui:EnumField value="Center" type="JeangBoYuan.ProfilerLogger.PathPrefix, JeangBoYuan.ProfilerLogger" binding-path="outputPathEditor.prefix" include-obsolete-values="false" />
+            <ui:TextField placeholder-text="path" tooltip="Path relative to prefix" binding-path="outputPathEditor.path" />
+        </ui:VisualElement>
+        <ui:VisualElement class="pathField" style="flex-grow: 1; flex-direction: row;">
+            <ui:Label text="Play in Build: " tooltip="Output path when playing in build" />
+            <ui:EnumField value="Center" type="JeangBoYuan.ProfilerLogger.PathPrefix, JeangBoYuan.ProfilerLogger" binding-path="outputPathGameBuild.prefix" />
+            <ui:TextField placeholder-text="path" tooltip="Path relative to prefix" binding-path="outputPathGameBuild.path" />
+        </ui:VisualElement>
+    </ui:Foldout>
+    <ui:Foldout text="Sampling Setting" name="samplingSettingBox" view-data-key="samplingSettingBox" class="box">
+        <uie:PropertyField binding-path="sampleIntervalSeconds" />
+        <uie:PropertyField binding-path="sampleCapacity" />
+    </ui:Foldout>
+    <ui:Foldout text="GUI Setting" name="guiSettingBox" view-data-key="guiSettingBox" class="box">
+        <uie:PropertyField binding-path="showFPSOnGUI" name="showFpsToggle" />
+        <ui:VisualElement name="showFpsSetting">
+            <uie:PropertyField binding-path="showFPSPosition" />
+        </ui:VisualElement>
+    </ui:Foldout>
+    <ui:Foldout text="Target Profiler Counters &amp; Markers" name="targetBox" class="box">
+        <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
+            <ui:Button text="Export" name="exportTargets" />
+            <ui:Button text="Load" name="loadTargets" />
+        </ui:VisualElement>
+        <ui:ListView binding-path="targetMetrics" show-border="true" virtualization-method="DynamicHeight" reorderable="true" reorder-mode="Animated" name="targetMetricsList" show-alternating-row-backgrounds="ContentOnly" show-add-remove-footer="true" style="max-height: 300px;" />
+    </ui:Foldout>
+</ui:UXML>

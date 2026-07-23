@@ -6,9 +6,9 @@ using UnityEngine;
 namespace JeangBoYuan.ProfilerLogger
 {
     /// <summary>
-    /// All the ProfilerCategory
+    /// All the ProfilerCategory. This enum is used to show enum dropdown.
     /// </summary>
-    internal enum Category
+    public enum Category
     {
         Ai,
         Animation,
@@ -35,7 +35,7 @@ namespace JeangBoYuan.ProfilerLogger
     /// Specify which metric (Profiler Counter or Profiler Marker) need to be logged
     /// </summary>
     [Serializable]
-    internal struct TargetMetrics
+    public struct TargetMetrics
     {
         public bool disabled;
         public Category category;
@@ -57,7 +57,7 @@ namespace JeangBoYuan.ProfilerLogger
         }
     }
 
-    internal enum PathPrefix
+    public enum PathPrefix
     {
         PersistentDataPath,
         [Tooltip("The folder Assets/StreamingAssets/\n\nDon't use this prefix in built game")]
@@ -71,7 +71,7 @@ namespace JeangBoYuan.ProfilerLogger
     /// Represent the path with prefix and suffix
     /// </summary>
     [Serializable]
-    internal struct PathStruct
+    public struct PathStruct
     {
         public PathPrefix prefix;
         public string path;

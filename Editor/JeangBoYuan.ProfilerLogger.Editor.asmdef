@@ -1,0 +1,18 @@
+{
+    "name": "JeangBoYuan.ProfilerLogger.Editor",
+    "rootNamespace": "JeangBoYuan.ProfilerLogger.Editor",
+    "references": [
+        "GUID:db5ab6c25f87e6348b2e7119da3c55f4"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

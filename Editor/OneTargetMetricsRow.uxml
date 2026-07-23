@@ -1,0 +1,9 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Packages/com.jeang-bo-yuan.profiler_logger/Editor/ProfilerLoggerEditor_USS.uss?fileID=7433441132597879392&amp;guid=d02a44c850effb6459938cd973649863&amp;type=3#ProfilerLoggerEditor_USS" />
+    <ui:VisualElement name="VisualElement" enabled="true" style="flex-grow: 0; flex-direction: row; padding-bottom: 3px; padding-top: 3px; overflow: hidden; max-width: none;">
+        <ui:Label text="#01" name="idLabel" style="margin-left: 0; padding-left: 0; width: 30px;" />
+        <ui:Toggle binding-path="disabled" enabled="true" name="disabled" style="margin-right: 10px;" />
+        <ui:EnumField value="Center" type="UnityEngine.TextAlignment, UnityEngine.TextRenderingModule" binding-path="category" name="category" style="margin-right: 10px;" />
+        <ui:TextField placeholder-text="Stat Name" binding-path="statName" name="statName" style="flex-grow: 1; min-width: 0; width: 0%;" />
+    </ui:VisualElement>
+</ui:UXML>

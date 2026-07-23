@@ -28,7 +28,7 @@ namespace JeangBoYuan.ProfilerLogger
         
         [SerializeField, Tooltip("The minimum interval (in seconds) between each sample")]
         private float sampleIntervalSeconds = 1f;
-        [SerializeField, Tooltip("How many sampled data will be stored"), Min(1)]
+        [SerializeField, Tooltip("The capacity of ProfilerRecorder. When writing a sample, the average of all sampled data are written."), Min(1)]
         private int sampleCapacity = 10;
         [SerializeField]
         private bool showFPSOnGUI = false;
@@ -36,7 +36,7 @@ namespace JeangBoYuan.ProfilerLogger
         private Vector2 showFPSPosition = new(100f, 100f); 
         
         [SerializeField, Tooltip("Specify which metric (Profiler Counter or Profiler Marker) need to be logged")]
-        private List<TargetMetrics> targetMetrics = new List<TargetMetrics>
+        public List<TargetMetrics> targetMetrics = new List<TargetMetrics>
         {
             new TargetMetrics(){category = Category.Render, statName = "CPU Total Frame Time"},
             new TargetMetrics(){category = Category.Render, statName = "GPU Frame Time"},
